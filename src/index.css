@@ -2,6 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Enterprise Color Palette */
+  --bg-primary: #0a0e17;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1f2937;
+  --bg-card: #111827;
+  --bg-card-hover: #1f2937;
+  
+  --border-primary: #374151;
+  --border-subtle: #1f2937;
+  --border-focus: #3b82f6;
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+  --text-disabled: #4b5563;
+  
+  /* Semantic Colors */
+  --color-critical: #dc2626;
+  --color-critical-bg: rgba(220, 38, 38, 0.1);
+  --color-critical-border: rgba(220, 38, 38, 0.3);
+  
+  --color-high: #ea580c;
+  --color-high-bg: rgba(234, 88, 12, 0.1);
+  --color-high-border: rgba(234, 88, 12, 0.3);
+  
+  --color-medium: #d97706;
+  --color-medium-bg: rgba(217, 119, 6, 0.1);
+  --color-medium-border: rgba(217, 119, 6, 0.3);
+  
+  --color-low: #059669;
+  --color-low-bg: rgba(5, 150, 105, 0.1);
+  --color-low-border: rgba(5, 150, 105, 0.3);
+  
+  --color-info: #2563eb;
+  --color-info-bg: rgba(37, 99, 235, 0.1);
+  --color-info-border: rgba(37, 99, 235, 0.3);
+  
+  --color-success: #059669;
+  --color-success-bg: rgba(5, 150, 105, 0.1);
+  --color-success-border: rgba(5, 150, 105, 0.3);
+  
+  /* Spacing System (4px base unit) */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  
+  /* Border Radius */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -10,150 +67,278 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #FFFFFF;
-  font-size: 14px;
+  color: var(--text-primary);
+  font-size: 13px;
   line-height: 1.5;
-  background-color: #000010;
-  background-image: url('/space-background.jpg');
-  background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+  background-color: var(--bg-primary);
   position: relative;
   overflow-x: hidden;
 }
 
-/* Light overlay to maintain readability without obscuring the beautiful background */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 10, 0.25);
-  pointer-events: none;
-  z-index: 0;
-}
-
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    /* Orion constellation stars (larger/brighter) */
-    radial-gradient(3.5px 3.5px at 48% 15%, rgba(248,250,252,1), transparent),
-    radial-gradient(3px 3px at 46% 18%, rgba(248,250,252,0.95), transparent),
-    radial-gradient(2.5px 2.5px at 44% 21%, rgba(248,250,252,0.9), transparent),
-    radial-gradient(3.5px 3.5px at 50% 23%, rgba(248,250,252,0.95), transparent),
-    radial-gradient(3px 3px at 48% 26%, rgba(248,250,252,0.9), transparent),
-    radial-gradient(2.5px 2.5px at 52% 28%, rgba(248,250,252,0.85), transparent),
-    radial-gradient(3px 3px at 54% 30%, rgba(248,250,252,0.9), transparent),
-    radial-gradient(3.5px 3.5px at 42% 20%, rgba(248,250,252,0.9), transparent),
-    radial-gradient(3.5px 3.5px at 56% 25%, rgba(248,250,252,0.9), transparent),
-    /* Orion's belt */
-    radial-gradient(2.5px 2.5px at 49% 22%, rgba(248,250,252,0.95), transparent),
-    radial-gradient(2.5px 2.5px at 50.5% 22.5%, rgba(248,250,252,0.9), transparent),
-    radial-gradient(2.5px 2.5px at 52% 23%, rgba(248,250,252,0.85), transparent),
-    /* Medium stars */
-    radial-gradient(2px 2px at 15% 30%, rgba(248,250,252,0.7), transparent),
-    radial-gradient(2px 2px at 85% 35%, rgba(248,250,252,0.65), transparent),
-    radial-gradient(2px 2px at 30% 70%, rgba(248,250,252,0.6), transparent),
-    radial-gradient(2px 2px at 70% 75%, rgba(248,250,252,0.65), transparent),
-    /* Small stars */
-    radial-gradient(1.5px 1.5px at 10% 15%, rgba(248,250,252,0.55), transparent),
-    radial-gradient(1.5px 1.5px at 25% 10%, rgba(248,250,252,0.45), transparent),
-    radial-gradient(1.5px 1.5px at 40% 12%, rgba(248,250,252,0.5), transparent),
-    radial-gradient(1.5px 1.5px at 60% 10%, rgba(248,250,252,0.55), transparent),
-    radial-gradient(1.5px 1.5px at 75% 12%, rgba(248,250,252,0.45), transparent),
-    radial-gradient(1.5px 1.5px at 90% 18%, rgba(248,250,252,0.5), transparent),
-    radial-gradient(1.5px 1.5px at 5% 55%, rgba(248,250,252,0.4), transparent),
-    radial-gradient(1.5px 1.5px at 12% 65%, rgba(248,250,252,0.5), transparent),
-    radial-gradient(1.5px 1.5px at 35% 60%, rgba(248,250,252,0.45), transparent),
-    radial-gradient(1.5px 1.5px at 55% 55%, rgba(248,250,252,0.5), transparent),
-    radial-gradient(1.5px 1.5px at 78% 50%, rgba(248,250,252,0.45), transparent),
-    radial-gradient(1.5px 1.5px at 92% 60%, rgba(248,250,252,0.5), transparent),
-    radial-gradient(1.5px 1.5px at 18% 80%, rgba(248,250,252,0.45), transparent),
-    radial-gradient(1.5px 1.5px at 42% 85%, rgba(248,250,252,0.5), transparent),
-    radial-gradient(1.5px 1.5px at 65% 82%, rgba(248,250,252,0.45), transparent),
-    radial-gradient(1.5px 1.5px at 88% 78%, rgba(248,250,252,0.5), transparent);
-  pointer-events: none;
-  z-index: 0;
-  animation: twinkle 4.5s ease-in-out infinite;
-}
-
-@keyframes twinkle {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.75;
-  }
-}
-
-/* Additional star layer with faster twinkle */
-#bg-stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    /* Tiny stars for depth */
-    radial-gradient(1px 1px at 5% 10%, rgba(248,250,252,0.4), transparent),
-    radial-gradient(1px 1px at 20% 25%, rgba(248,250,252,0.35), transparent),
-    radial-gradient(1px 1px at 35% 8%, rgba(248,250,252,0.4), transparent),
-    radial-gradient(1px 1px at 50% 18%, rgba(248,250,252,0.3), transparent),
-    radial-gradient(1px 1px at 65% 5%, rgba(248,250,252,0.35), transparent),
-    radial-gradient(1px 1px at 80% 20%, rgba(248,250,252,0.4), transparent),
-    radial-gradient(1px 1px at 95% 12%, rgba(248,250,252,0.3), transparent),
-    radial-gradient(1px 1px at 8% 40%, rgba(248,250,252,0.35), transparent),
-    radial-gradient(1px 1px at 18% 50%, rgba(248,250,252,0.4), transparent),
-    radial-gradient(1px 1px at 30% 45%, rgba(248,250,252,0.3), transparent),
-    radial-gradient(1px 1px at 42% 42%, rgba(248,250,252,0.35), transparent),
-    radial-gradient(1px 1px at 58% 48%, rgba(248,250,252,0.4), transparent),
-    radial-gradient(1px 1px at 72% 40%, rgba(248,250,252,0.3), transparent),
-    radial-gradient(1px 1px at 85% 45%, rgba(248,250,252,0.35), transparent),
-    radial-gradient(1px 1px at 10% 70%, rgba(248,250,252,0.4), transparent),
-    radial-gradient(1px 1px at 25% 75%, rgba(248,250,252,0.3), transparent),
-    radial-gradient(1px 1px at 40% 72%, rgba(248,250,252,0.35), transparent),
-    radial-gradient(1px 1px at 55% 68%, rgba(248,250,252,0.4), transparent),
-    radial-gradient(1px 1px at 70% 72%, rgba(248,250,252,0.3), transparent),
-    radial-gradient(1px 1px at 85% 68%, rgba(248,250,252,0.35), transparent),
-    radial-gradient(1px 1px at 95% 75%, rgba(248,250,252,0.4), transparent);
-  animation: twinkleFast 3.5s ease-in-out infinite;
-}
-
-@keyframes twinkleFast {
-  0%, 100% {
-    opacity: 0.85;
-  }
-  50% {
-    opacity: 0.55;
-  }
-}
-
 @layer utilities {
-  .glass-card {
-    background-color: rgba(7, 18, 35);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 16px;
-    box-shadow: 0 0 30px rgba(139, 92, 246, 0.06);
+  /* Enterprise Card System */
+  .enterprise-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-none);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
   }
-  
-  .glass-card-red {
-    background-color: rgba(7, 18, 35);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(239, 68, 68, 0.5);
-    border-radius: 16px;
-    box-shadow: 0 0 45px rgba(239, 68, 68, 0.35);
+
+  .enterprise-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-subtle);
+  }
+
+  .enterprise-card-elevated {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-none);
+  }
+
+  /* Sidebar Styling */
+  .enterprise-sidebar {
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-primary);
+  }
+
+  /* Navigation Items */
+  .nav-item {
+    border-radius: var(--radius-sm);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-item-active {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  /* Button System */
+  .btn-primary {
+    background: var(--color-info);
+    color: white;
+    border: 1px solid var(--color-info);
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 13px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-primary:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  .btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 13px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-subtle);
+  }
+
+  .btn-critical {
+    background: var(--color-critical-bg);
+    color: var(--color-critical);
+    border: 1px solid var(--color-critical-border);
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 13px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-critical:hover {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: var(--color-critical);
+  }
+
+  /* Severity Badges */
+  .badge-critical {
+    background: var(--color-critical-bg);
+    color: var(--color-critical);
+    border: 1px solid var(--color-critical-border);
+    border-radius: var(--radius-md);
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-high {
+    background: var(--color-high-bg);
+    color: var(--color-high);
+    border: 1px solid var(--color-high-border);
+    border-radius: var(--radius-md);
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-medium {
+    background: var(--color-medium-bg);
+    color: var(--color-medium);
+    border: 1px solid var(--color-medium-border);
+    border-radius: var(--radius-md);
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-low {
+    background: var(--color-low-bg);
+    color: var(--color-low);
+    border: 1px solid var(--color-low-border);
+    border-radius: var(--radius-md);
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Table Styling */
+  .enterprise-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .enterprise-table th {
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-primary);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+  }
+
+  .enterprise-table td {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .enterprise-table tr:hover td {
+    background: var(--bg-card-hover);
+  }
+
+  .enterprise-table tbody tr:nth-child(even) {
+    background: rgba(31, 41, 55, 0.3);
+  }
+
+  /* Input Styling */
+  .enterprise-input {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    transition: border-color 0.15s ease;
+  }
+
+  .enterprise-input:focus {
+    outline: none;
+    border-color: var(--border-focus);
+  }
+
+  .enterprise-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  /* Incident Panel */
+  .incident-panel {
+    background: var(--bg-secondary);
+    border-left: 2px solid var(--color-critical);
+  }
+
+  /* Metric Icon Circle */
+  .metric-icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-none);
+    flex-shrink: 0;
+  }
+
+  /* Feed Row */
+  .feed-row {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-none);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .feed-row:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-primary);
+  }
+
+  /* Typography Utilities */
+  .text-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-tertiary);
+  }
+
+  .text-body {
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .text-muted {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .text-header {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  /* Status Indicator */
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .status-online {
+    background: var(--color-success);
+  }
+
+  .status-warning {
+    background: var(--color-medium);
+  }
+
+  .status-offline {
+    background: var(--color-critical);
   }
 }

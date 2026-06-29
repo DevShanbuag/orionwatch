@@ -3,19 +3,34 @@ import { Card } from '../components/shared/Card';
 import { Badge } from '../components/shared/Badge';
 import { DataTable } from '../components/shared/DataTable';
 import { SearchInput } from '../components/shared/SearchInput';
-import { useThreatStore } from '../store';
+import { useThreats } from '../hooks/useThreats';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import type { Threat } from '../types/threat';
 
 const ThreatIntelligence: React.FC = () => {
-  const { threats, selectedThreat, setSelectedThreat } = useThreatStore();
+  const { data: threats = [], isLoading } = useThreats();
   const [search, setSearch] = useState('');
   const [severityFilter, setSeverityFilter] = useState<string>('All');
+  const [selectedThreat, setSelectedThreat] = useState<Threat | null>(null);
 
-  const filteredThreats = threats.filter(
+  // Transform threats for display to match expected structure
+  const displayThreats = threats.map((threat) => ({
+    id: threat.id,
+    type: threat.threat_type,
+    severity: threat.severity,
+    source: threat.source,
+    country: threat.country,
+    ip: threat.indicator,
+    timestamp: threat.first_seen,
+    description: `${threat.threat_type} from ${threat.source} with ${threat.confidence}% confidence`,
+  }));
+
+  const filteredThreats = displayThreats.filter(
     (t) =>
       (t.type.toLowerCase().includes(search.toLowerCase()) ||
-        t.country.toLowerCase().includes(search.toLowerCase())) &&
+        t.country.toLowerCase().includes(search.toLowerCase()) ||
+        t.ip.toLowerCase().includes(search.toLowerCase())) &&
       (severityFilter === 'All' || t.severity === severityFilter)
   );
 
@@ -27,6 +42,9 @@ const ThreatIntelligence: React.FC = () => {
     >
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Threat Intelligence</h1>
+        <span className="text-sm text-gray-400">
+          {isLoading ? 'Loading...' : `${displayThreats.length} threats`}
+        </span>
       </div>
 
       <div className="flex flex-wrap gap-4 items-center">
@@ -36,7 +54,7 @@ const ThreatIntelligence: React.FC = () => {
         <select
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value)}
-          className="bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-2 text-sm"
+          className="enterprise-input px-4 py-2"
         >
           <option value="All">All Severities</option>
           <option value="Critical">Critical</option>
@@ -57,24 +75,27 @@ const ThreatIntelligence: React.FC = () => {
             { key: 'timestamp', header: 'Timestamp' },
           ]}
           data={filteredThreats}
-          renderRow={(item) => (
-            <tr
-              key={item.id}
-              className="border-b border-slate-800 hover:bg-slate-800/30 cursor-pointer"
-              onClick={() => setSelectedThreat(item)}
-            >
-              <td className="py-3 px-4">{item.type}</td>
-              <td className="py-3 px-4">
-                <Badge severity={item.severity}>{item.severity}</Badge>
-              </td>
-              <td className="py-3 px-4">{item.source}</td>
-              <td className="py-3 px-4">{item.country}</td>
-              <td className="py-3 px-4 font-mono text-sm text-slate-400">{item.ip}</td>
-              <td className="py-3 px-4 text-slate-400 text-sm">
-                {new Date(item.timestamp).toLocaleString()}
-              </td>
-            </tr>
-          )}
+          renderRow={(item) => {
+            const originalThreat = threats.find((t) => t.id === item.id);
+            return (
+              <tr
+                key={item.id}
+                className="cursor-pointer"
+                onClick={() => setSelectedThreat(originalThreat || null)}
+              >
+                <td className="text-body">{item.type}</td>
+                <td className="text-body">
+                  <Badge severity={item.severity}>{item.severity}</Badge>
+                </td>
+                <td className="text-body">{item.source}</td>
+                <td className="text-body">{item.country}</td>
+                <td className="text-body font-mono text-[var(--text-secondary)]">{item.ip}</td>
+                <td className="text-body text-[var(--text-secondary)]">
+                  {new Date(item.timestamp).toLocaleString()}
+                </td>
+              </tr>
+            );
+          }}
         />
       </Card>
 
@@ -84,18 +105,18 @@ const ThreatIntelligence: React.FC = () => {
             initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
-            className="fixed right-0 top-0 bottom-0 w-96 glassmorphism p-6 z-50"
+            className="fixed right-0 top-0 bottom-0 w-96 enterprise-card p-6 z-50"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">Threat Details</h2>
-              <button onClick={() => setSelectedThreat(null)} className="p-2 hover:bg-slate-800 rounded-lg">
+              <h2 className="text-[16px] font-bold text-[var(--text-primary)]">Threat Details</h2>
+              <button onClick={() => setSelectedThreat(null)} className="p-2 hover:bg-[var(--bg-tertiary)] rounded-none">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <p className="text-slate-400 text-sm">Type</p>
-                <p className="font-medium">{selectedThreat.type}</p>
+                <p className="text-muted">Type</p>
+                <p className="text-header">{selectedThreat.threat_type}</p>
               </div>
               <div>
                 <p className="text-slate-400 text-sm">Severity</p>
@@ -110,12 +131,24 @@ const ThreatIntelligence: React.FC = () => {
                 <p className="font-medium">{selectedThreat.country}</p>
               </div>
               <div>
-                <p className="text-slate-400 text-sm">IP Address</p>
-                <p className="font-mono text-sm">{selectedThreat.ip}</p>
+                <p className="text-slate-400 text-sm">Indicator</p>
+                <p className="font-mono text-sm">{selectedThreat.indicator}</p>
               </div>
               <div>
-                <p className="text-slate-400 text-sm">Description</p>
-                <p className="text-slate-300">{selectedThreat.description}</p>
+                <p className="text-slate-400 text-sm">Confidence</p>
+                <p className="font-medium">{selectedThreat.confidence}%</p>
+              </div>
+              <div>
+                <p className="text-slate-400 text-sm">Status</p>
+                <p className="font-medium">{selectedThreat.status}</p>
+              </div>
+              <div>
+                <p className="text-slate-400 text-sm">First Seen</p>
+                <p className="font-medium">{new Date(selectedThreat.first_seen).toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-slate-400 text-sm">Last Seen</p>
+                <p className="font-medium">{new Date(selectedThreat.last_seen).toLocaleString()}</p>
               </div>
             </div>
           </motion.div>

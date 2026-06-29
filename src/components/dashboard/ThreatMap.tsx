@@ -1,5 +1,7 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useCallback, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { useSelectedThreatStore } from '../../store/useSelectedThreatStore';
+import { useThreatFilterStore } from '../../store/useThreatFilterStore';
 
 interface AttackRoute {
   id: string;
@@ -92,15 +94,30 @@ const getSeverityColor = (severity: string) => {
   }
 };
 
-const PulseDot = ({ color, delay = 0, size = 12 }: { color: string; delay?: number; size?: number }) => (
-  <div className="absolute transform -translate-x-1/2 -translate-y-1/2">
+const PulseDot = ({ 
+  color, 
+  delay = 0, 
+  size = 12,
+  onClick,
+  isSelected 
+}: { 
+  color: string; 
+  delay?: number; 
+  size?: number;
+  onClick?: () => void;
+  isSelected?: boolean;
+}) => (
+  <div 
+    className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+    onClick={onClick}
+  >
     <motion.div
       className="rounded-full absolute"
       style={{
         width: size,
         height: size,
-        backgroundColor: color,
-        boxShadow: `0 0 ${size}px ${color}`
+        backgroundColor: isSelected ? '#FFFFFF' : color,
+        boxShadow: `0 0 ${isSelected ? size * 2 : size}px ${isSelected ? '#FFFFFF' : color}`
       }}
       animate={{
         scale: [1, 1.5, 1],
@@ -118,7 +135,7 @@ const PulseDot = ({ color, delay = 0, size = 12 }: { color: string; delay?: numb
       style={{
         width: size * 0.6,
         height: size * 0.6,
-        backgroundColor: color,
+        backgroundColor: isSelected ? '#FFFFFF' : color,
         left: size * 0.2,
         top: size * 0.2
       }}
@@ -192,6 +209,42 @@ const AttackArc = ({ route }: { route: AttackRoute }) => {
 };
 
 export const ThreatMap: React.FC = () => {
+  const { selectedThreat, setSelectedThreat } = useSelectedThreatStore();
+  const { filter } = useThreatFilterStore();
+
+  // Filter attack routes based on severity filter
+  const filteredAttackRoutes = useMemo(() => {
+    if (!filter.severity) return attackRoutes;
+    
+    const severityMap: Record<string, 'critical' | 'high' | 'medium' | 'blocked'> = {
+      'Critical': 'critical',
+      'High': 'high',
+      'Medium': 'medium',
+      'Low': 'medium'
+    };
+    
+    const mappedSeverity = severityMap[filter.severity] || 'medium';
+    return attackRoutes.filter(route => route.severity === mappedSeverity);
+  }, [filter.severity]);
+
+  const handleMarkerClick = useCallback((routeId: string) => {
+    // Create a mock threat object for the selected route
+    const mockThreat = {
+      id: routeId,
+      indicator: routeId,
+      source: 'Global Map',
+      threat_type: 'Network Attack',
+      severity: 'High' as const,
+      country: 'Unknown',
+      confidence: 85,
+      first_seen: new Date().toISOString(),
+      last_seen: new Date().toISOString(),
+      status: 'Active',
+      created_at: new Date().toISOString()
+    };
+    setSelectedThreat(mockThreat);
+  }, [setSelectedThreat]);
+
   return (
     <div className="glassmorphism rounded-xl border border-purple-500/20 bg-gray-900/50 backdrop-blur-xl p-5 shadow-[0_0_30px_rgba(139,92,246,0.1)]">
       <div className="flex justify-between items-center mb-4">
@@ -235,29 +288,43 @@ export const ThreatMap: React.FC = () => {
 
         {/* Attack Arcs */}
         <svg className="absolute inset-0 w-full h-full z-10">
-          {attackRoutes.map((route, i) => (
+          {filteredAttackRoutes.map((route) => (
             <AttackArc key={route.id} route={route} />
           ))}
         </svg>
 
         {/* Attack Nodes */}
-        {attackRoutes.map((route, i) => {
+        {filteredAttackRoutes.map((route) => {
           const fromColor = getSeverityColor(route.severity);
-          const toColor = i % 2 === 0 ? '#8B5CF6' : '#A855F7';
+          const toColor = '#8B5CF6';
           
           const fromLeft = `${50 + route.from.lng * 0.45}%`;
           const fromTop = `${50 - route.from.lat * 0.6}%`;
           const toLeft = `${50 + route.to.lng * 0.45}%`;
           const toTop = `${50 - route.to.lat * 0.6}%`;
 
+          const isFromSelected = selectedThreat?.id === route.id;
+          const isToSelected = selectedThreat?.id === `${route.id}-to`;
+
           return (
             <React.Fragment key={`nodes-${route.id}`}>
-              <PulseDot color={fromColor} delay={i * 0.2} size={12} />
               <div style={{ position: 'absolute', left: fromLeft, top: fromTop }}>
-                <PulseDot color={fromColor} delay={i * 0.2} size={12} />
+                <PulseDot 
+                  color={fromColor} 
+                  delay={0} 
+                  size={12} 
+                  onClick={() => handleMarkerClick(route.id)}
+                  isSelected={isFromSelected}
+                />
               </div>
               <div style={{ position: 'absolute', left: toLeft, top: toTop }}>
-                <PulseDot color={toColor} delay={i * 0.2 + 0.3} size={10} />
+                <PulseDot 
+                  color={toColor} 
+                  delay={0.3} 
+                  size={10} 
+                  onClick={() => handleMarkerClick(`${route.id}-to`)}
+                  isSelected={isToSelected}
+                />
               </div>
             </React.Fragment>
           );

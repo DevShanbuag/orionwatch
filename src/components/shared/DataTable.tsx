@@ -7,12 +7,12 @@ interface DataTableProps {
 }
 
 export const DataTable: React.FC<DataTableProps> = ({ columns, data, renderRow }) => (
-  <div className="overflow-x-auto rounded-xl">
-    <table className="w-full text-left">
+  <div className="overflow-x-auto rounded-none border border-[var(--border-primary)]">
+    <table className="enterprise-table text-left">
       <thead>
-        <tr className="border-b border-slate-700/50">
+        <tr>
           {columns.map((col) => (
-            <th key={col.key} className="py-3 px-4 text-slate-400 font-medium text-sm uppercase tracking-wider">
+            <th key={col.key} className="text-label">
               {col.header}
             </th>
           ))}

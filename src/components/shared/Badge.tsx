@@ -9,27 +9,27 @@ interface BadgeProps {
   children: React.ReactNode;
 }
 
-const severityColors: Record<Severity, string> = {
-  Critical: 'dark:bg-red-500/20 bg-red-50 dark:text-red-400 text-red-600 dark:border border-red-500/30',
-  High: 'dark:bg-orange-500/20 bg-orange-50 dark:text-orange-400 text-orange-600 dark:border border-orange-500/30',
-  Medium: 'dark:bg-yellow-500/20 bg-yellow-50 dark:text-yellow-400 text-yellow-600 dark:border border-yellow-500/30',
-  Low: 'dark:bg-green-500/20 bg-green-50 dark:text-green-400 text-green-600 dark:border border-green-500/30',
+const severityClasses: Record<Severity, string> = {
+  Critical: 'badge-critical',
+  High: 'badge-high',
+  Medium: 'badge-medium',
+  Low: 'badge-low',
 };
 
-const cacheStatusColors: Record<CacheStatus, string> = {
-  Cached: 'dark:bg-blue-500/20 bg-blue-50 dark:text-blue-400 text-blue-600 dark:border border-blue-500/30',
-  Live: 'dark:bg-purple-500/20 bg-purple-50 dark:text-purple-400 text-purple-600 dark:border border-purple-500/30',
+const cacheStatusClasses: Record<CacheStatus, string> = {
+  Cached: 'bg-[var(--color-info-bg)] text-[var(--color-info)] border border-[var(--color-info-border)] border-[var(--radius-md)] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.05em]',
+  Live: 'bg-[var(--color-success-bg)] text-[var(--color-success)] border border-[var(--color-success-border)] border-[var(--radius-md)] px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.05em]',
 };
 
 export const Badge: React.FC<BadgeProps> = ({ severity, cacheStatus, children }) => {
-  let className = 'px-3 py-1 rounded-md text-xs font-medium';
-  
+  let className = '';
+
   if (severity) {
-    className += ` ${severityColors[severity]}`;
+    className = severityClasses[severity];
   } else if (cacheStatus) {
-    className += ` ${cacheStatusColors[cacheStatus]}`;
+    className = cacheStatusClasses[cacheStatus];
   }
-  
+
   return (
     <span className={className}>
       {children}

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Card } from '../components/shared/Card';
 import { StatusIndicator } from '../components/shared/StatusIndicator';
-import { useServiceStore } from '../store';
+import { useServices } from '../hooks/useServices';
 import { Server, Activity, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const ServiceHealth: React.FC = () => {
-  const { services } = useServiceStore();
+  const { data: services = [], isLoading } = useServices();
 
   return (
     <motion.div
@@ -27,15 +27,24 @@ export const ServiceHealth: React.FC = () => {
             <div className="space-y-2 text-sm text-slate-400">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4" />
-                <span>Uptime: {service.uptime}%</span>
+                <span>Provider: {service.provider}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                <span>Latency: {service.latency}ms</span>
+                <span>
+                  Last Sync: {service.last_sync 
+                    ? new Date(service.last_sync).toLocaleString() 
+                    : 'Never'}
+                </span>
               </div>
             </div>
           </Card>
         ))}
+        {services.length === 0 && !isLoading && (
+          <div className="col-span-full text-center text-slate-400 py-8">
+            No services available. Services table may not be configured yet.
+          </div>
+        )}
       </div>
 
       <Card>

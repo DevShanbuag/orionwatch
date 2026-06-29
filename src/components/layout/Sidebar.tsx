@@ -20,52 +20,55 @@ import {
 import { useRealtimeFeed } from '../../hooks/useRealtimeFeed';
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-  { to: '/threats', label: 'Threats', icon: <ShieldAlert className="w-5 h-5" /> },
-  { to: '/live-feed', label: 'Live Feed', icon: <Activity className="w-5 h-5" /> },
-  { to: '/ip-intel', label: 'IP Intelligence', icon: <MapPin className="w-5 h-5" /> },
-  { to: '/url-intel', label: 'URL Intelligence', icon: <Link2 className="w-5 h-5" /> },
-  { to: '/assets', label: 'Assets', icon: <Layers className="w-5 h-5" /> },
-  { to: '/reports', label: 'Reports', icon: <FileText className="w-5 h-5" /> },
-  { to: '/playbooks', label: 'Playbooks', icon: <Play className="w-5 h-5" /> },
-  { to: '/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
+  { to: '/', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+  { to: '/threats', label: 'Threats', icon: <ShieldAlert className="w-4 h-4" /> },
+  { to: '/live-feed', label: 'Live Feed', icon: <Activity className="w-4 h-4" /> },
+  { to: '/ip-intel', label: 'IP Intelligence', icon: <MapPin className="w-4 h-4" /> },
+  { to: '/url-intel', label: 'URL Intelligence', icon: <Link2 className="w-4 h-4" /> },
+  { to: '/assets', label: 'Assets', icon: <Layers className="w-4 h-4" /> },
+  { to: '/reports', label: 'Reports', icon: <FileText className="w-4 h-4" /> },
+  { to: '/playbooks', label: 'Playbooks', icon: <Play className="w-4 h-4" /> },
+  { to: '/settings', label: 'Settings', icon: <Settings className="w-4 h-4" /> },
 ];
 
 export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
   const location = useLocation();
   const { connected, reconnecting } = useRealtimeFeed({ channelName: 'threats' });
-  
+
   return (
-    <aside className={`w-[232px] h-screen px-5 py-6 flex flex-col gap-6 border-r border-[rgba(255,255,255,0.06)] bg-[#050816] relative z-10 ${className}`}>
+    <aside className={`w-[232px] h-screen px-4 py-4 flex flex-col gap-4 enterprise-sidebar relative z-10 ${className}`}>
       {/* Logo */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex items-center justify-center shadow-[0_0_20px_rgba(124,58,237,0.4)]">
-          <Compass className="w-5 h-5 text-white" />
+      <div className="flex items-center gap-3 px-1">
+        <div className="w-8 h-8 rounded-none bg-[var(--bg-tertiary)] border border-[var(--border-primary)] flex items-center justify-center">
+          <Compass className="w-4 h-4 text-[var(--text-primary)]" />
         </div>
         <div>
-          <h2 className="text-base font-bold">OrionWatch</h2>
-          <p className="text-[10px] text-[#94A3B8] uppercase tracking-[0.12em]">Real-time Threat Intel</p>
+          <h2 className="text-sm font-bold tracking-tight text-[var(--text-primary)]">OrionWatch</h2>
+          <p className="text-[11px] text-[var(--text-tertiary)] uppercase tracking-[0.05em] font-semibold">Threat Intel SOC</p>
         </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1">
-        <ul className="space-y-1.5">
+        <p className="text-[11px] font-bold uppercase tracking-[0.05em] text-[var(--text-tertiary)] px-3 mb-2">Operations</p>
+        <ul className="space-y-1">
           {navItems.map((item) => {
             const isActive = location.pathname === item.to;
             return (
               <li key={item.to}>
                 <NavLink
                   to={item.to}
-                  className={`h-12 flex items-center gap-3 px-3 rounded-[12px] transition-all duration-200
-                    ${isActive 
-                      ? 'bg-[rgba(124,58,237,0.25)] text-[#A855F7] shadow-[0_0_25px_rgba(124,58,237,0.2)] border border-[rgba(140,100,255,0.3)]' 
-                      : 'text-[#94A3B8] hover:text-[#FFFFFF] hover:bg-[rgba(140,100,255,0.08)]'
+                  className={`h-9 flex items-center gap-3 px-3 nav-item
+                    ${isActive
+                      ? 'nav-item-active'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'
                     }
                   `}
                 >
-                  <div className={isActive ? 'text-white' : ''}>{item.icon}</div>
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <div className={`flex items-center justify-center w-5 h-5 rounded-sm transition-colors ${isActive ? 'bg-[var(--bg-primary)] text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'}`}>
+                    {item.icon}
+                  </div>
+                  <span className="text-[13px] font-medium">{item.label}</span>
                 </NavLink>
               </li>
             );
@@ -74,55 +77,55 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className }) => {
       </nav>
 
       {/* System Status Card */}
-      <div className="glass-card p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="relative">
-            {connected ? (
-              <CheckCircle2 className="w-5 h-5 text-[#22C55E]" />
-            ) : reconnecting ? (
-              <Loader2 className="w-5 h-5 text-[#F59E0B] animate-spin" />
-            ) : (
-              <WifiOff className="w-5 h-5 text-[#EF4444]" />
-            )}
-            {connected && (
-              <div className="absolute inset-0 rounded-full bg-[#22C55E] animate-ping opacity-40"></div>
-            )}
+      <div>
+        <p className="text-[11px] font-bold uppercase tracking-[0.05em] text-[var(--text-tertiary)] px-1 mb-2">System</p>
+        <div className="enterprise-card p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="relative">
+              {connected ? (
+                <CheckCircle2 className="w-4 h-4 text-[var(--color-success)]" />
+              ) : reconnecting ? (
+                <Loader2 className="w-4 h-4 text-[var(--color-medium)] animate-spin" />
+              ) : (
+                <WifiOff className="w-4 h-4 text-[var(--color-critical)]" />
+              )}
+            </div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-primary)]">System Status</span>
           </div>
-          <span className="text-xs font-bold">System Status</span>
-        </div>
-        {reconnecting ? (
-          <p className="text-[11px] text-[#F59E0B] mb-3 font-semibold">Reconnecting...</p>
-        ) : connected ? (
-          <p className="text-[11px] text-[#22C55E] mb-3 font-semibold">All Systems Operational</p>
-        ) : (
-          <p className="text-[11px] text-[#EF4444] mb-3 font-semibold">Disconnected</p>
-        )}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] text-[#94A3B8]">API Sources</span>
-            <span className="text-[11px] font-mono font-semibold text-[#22C55E]">12 / 12 Online</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] text-[#94A3B8]">Realtime Lag</span>
-            <span className="text-[11px] font-mono font-semibold text-[#8B5CF6]">120 ms</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] text-[#94A3B8]">Events / sec</span>
-            <span className="text-[11px] font-mono font-semibold text-[#F59E0B]">642</span>
+          {reconnecting ? (
+            <p className="text-[12px] text-[var(--color-medium)] mb-2 font-semibold">Reconnecting...</p>
+          ) : connected ? (
+            <p className="text-[12px] text-[var(--color-success)] mb-2 font-semibold">Connected</p>
+          ) : (
+            <p className="text-[12px] text-[var(--color-critical)] mb-2 font-semibold">Disconnected</p>
+          )}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-[var(--text-tertiary)]">Data Sources</span>
+              <span className="text-[12px] font-mono font-semibold text-[var(--text-secondary)]">--</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-[var(--text-tertiary)]">Realtime Lag</span>
+              <span className="text-[12px] font-mono font-semibold text-[var(--text-secondary)]">-- ms</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] text-[var(--text-tertiary)]">Events / sec</span>
+              <span className="text-[12px] font-mono font-semibold text-[var(--text-secondary)]">--</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* User Profile */}
-      <div className="glass-card p-3 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex items-center justify-center border border-[rgba(140,100,255,0.3)]">
-          <User className="w-4.5 h-4.5 text-white" />
+      <div className="enterprise-card p-3 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-none bg-[var(--bg-tertiary)] border border-[var(--border-primary)] flex items-center justify-center">
+          <User className="w-4 h-4 text-[var(--text-primary)]" />
         </div>
-        <div className="flex-1">
-          <p className="text-sm font-bold">NEXUS-07</p>
-          <p className="text-[11px] text-[#94A3B8]">Administrator</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-[13px] font-bold truncate text-[var(--text-primary)]">User</p>
+          <p className="text-[11px] text-[var(--text-tertiary)]">Awaiting Auth</p>
         </div>
-        <ChevronDown className="w-4 h-4 text-[#94A3B8]" />
+        <ChevronDown className="w-4 h-4 text-[var(--text-tertiary)] flex-shrink-0" />
       </div>
     </aside>
   );

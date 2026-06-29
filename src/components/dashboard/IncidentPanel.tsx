@@ -1,139 +1,149 @@
-import React, { useCallback, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { ShieldAlert, X, MoreHorizontal, Search, Shield, Cpu, Globe, FileText, Plus, Lock, ScanFace } from 'lucide-react';
+import React, { useCallback } from 'react';
+import { ShieldAlert, X, Clock, AlertTriangle } from 'lucide-react';
+import { useSelectedThreatStore } from '../../store/useSelectedThreatStore';
 
 export const IncidentPanel: React.FC = () => {
-  const iocs = useMemo(() => ['185.220.101.45', 'tor-node', 'botnet', 'c2-server', 'malware'], []);
-  
-  const actions = useMemo(() => [
-    { icon: Lock, label: 'Block IP', color: 'red' as const },
-    { icon: Search, label: 'Lookup IP', color: 'purple' as const },
-    { icon: ScanFace, label: 'Scan Host', color: 'green' as const },
-    { icon: Plus, label: 'Add Rule', color: 'purple' as const },
-    { icon: FileText, label: 'Export Report', color: 'gray' as const },
-    { icon: MoreHorizontal, label: 'More', color: 'gray' as const }
-  ], []);
+  const { selectedThreat, clearSelectedThreat } = useSelectedThreatStore();
 
   const handleCloseClick = useCallback(() => {
-    console.log('Close incident panel');
-  }, []);
+    clearSelectedThreat();
+  }, [clearSelectedThreat]);
 
-  const handleActionClick = useCallback((actionLabel: string) => {
-    console.log(`Action clicked: ${actionLabel}`);
-  }, []);
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'Critical': return 'text-[var(--color-critical)] bg-[var(--color-critical-bg)] border-[var(--color-critical-border)]';
+      case 'High': return 'text-[var(--color-high)] bg-[var(--color-high-bg)] border-[var(--color-high-border)]';
+      case 'Medium': return 'text-[var(--color-medium)] bg-[var(--color-medium-bg)] border-[var(--color-medium-border)]';
+      case 'Low': return 'text-[var(--color-low)] bg-[var(--color-low-bg)] border-[var(--color-low-border)]';
+      default: return 'text-[var(--text-secondary)] bg-[var(--bg-tertiary)] border-[var(--border-primary)]';
+    }
+  };
 
   return (
-    <div className="w-[320px] h-full dark:bg-[rgba(8,16,32,0.95)] bg-white border-l-2 dark:border-[rgba(239,68,68,0.5)] border-red-300 shadow-[-8px_0_40px_rgba(239,68,68,0.15)] overflow-y-auto">
-      <div className="p-5">
+    <div className="w-[320px] h-full incident-panel overflow-y-auto">
+      <div className="p-4">
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-red-500/20 border border-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
-              <ShieldAlert className="w-5 h-5 text-red-400" />
+            <div className="p-2 rounded-none bg-[var(--color-critical-bg)] border border-[var(--color-critical-border)]">
+              <ShieldAlert className="w-4 h-4 text-[var(--color-critical)]" />
             </div>
             <div>
-              <h2 className="text-lg font-bold dark:text-white text-gray-900">Critical Incident Detected</h2>
+              <h2 className="text-[14px] font-bold text-[var(--text-primary)] tracking-tight">Incident Panel</h2>
               <div className="flex items-center gap-2 mt-1">
-                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
-                <span className="text-xs font-semibold text-red-400 uppercase tracking-wider">ACTIVE</span>
-                <span className="text-xs text-gray-500">Just now</span>
+                <div className="w-2 h-2 rounded-none status-dot status-offline" />
+                <span className="text-[11px] font-semibold text-[var(--color-tertiary)] uppercase tracking-[0.05em]">STANDBY</span>
               </div>
             </div>
           </div>
-          <button onClick={handleCloseClick} className="p-1.5 rounded-lg dark:hover:bg-gray-800/50 hover:bg-gray-100 transition-colors">
-            <X className="w-4 h-4 dark:text-gray-400 text-gray-600" />
+          <button onClick={handleCloseClick} className="p-1.5 rounded-none hover:bg-[var(--bg-tertiary)] transition-colors">
+            <X className="w-4 h-4 text-[var(--text-tertiary)]" />
           </button>
         </div>
 
-        {/* Incident Details */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Incident Details</span>
-            <span className="text-xs font-bold text-red-400 bg-red-500/15 px-2 py-0.5 rounded-full border border-red-500/20">CRITICAL</span>
-          </div>
-          <div className="space-y-2.5">
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-500">Source</span>
-              <span className="text-xs font-mono font-semibold dark:text-red-300 text-red-700">185.220.101.45</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-500">Country</span>
-              <span className="text-xs font-semibold dark:text-gray-300 text-gray-800">Germany</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-500">Threat</span>
-              <span className="text-xs font-semibold dark:text-gray-300 text-gray-800">Botnet Command & Control</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-500">Severity</span>
-              <span className="text-xs font-bold text-red-400">Critical</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-xs text-gray-500">Risk Score</span>
-              <span className="text-xs font-mono font-bold text-red-400">98/100</span>
-            </div>
-          </div>
-        </div>
+        <div className="h-px bg-[var(--border-primary)] mb-4" />
 
-        {/* IOC Section */}
-        <div className="mb-6">
-          <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-3">Indicators of Compromise</span>
-          <div className="flex flex-wrap gap-2">
-            {iocs.map((ioc) => (
-              <div key={ioc} className="px-2.5 py-1 rounded-full dark:bg-red-500/10 bg-red-50 border border-red-500/20">
-                <span className="text-[11px] font-mono font-semibold dark:text-red-300 text-red-700">{ioc}</span>
+        {/* Content */}
+        {selectedThreat ? (
+          <div className="space-y-4">
+            {/* Threat Overview */}
+            <div className="enterprise-card p-4">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.05em]">
+                  Threat Details
+                </span>
+                <span
+                  className={`text-[11px] font-semibold px-2 py-1 rounded border ${getSeverityColor(selectedThreat.severity)}`}
+                >
+                  {selectedThreat.severity}
+                </span>
               </div>
-            ))}
-          </div>
-        </div>
+              
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[11px] text-[var(--text-tertiary)] mb-1">Indicator</p>
+                  <p className="text-[13px] font-mono text-[var(--text-primary)] break-all">
+                    {selectedThreat.indicator}
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-[11px] text-[var(--text-tertiary)] mb-1">Type</p>
+                  <p className="text-[12px] text-[var(--text-secondary)]">
+                    {selectedThreat.threat_type}
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-[11px] text-[var(--text-tertiary)] mb-1">Source</p>
+                  <p className="text-[12px] text-[var(--text-secondary)]">
+                    {selectedThreat.source}
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-[11px] text-[var(--text-tertiary)] mb-1">Country</p>
+                  <p className="text-[12px] text-[var(--text-secondary)]">
+                    {selectedThreat.country}
+                  </p>
+                </div>
+              </div>
+            </div>
 
-        {/* AI Assessment */}
-        <div className="mb-6">
-          <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-3">AI Assessment</span>
-          <div className="p-3 rounded-lg dark:bg-gray-800/40 bg-gray-50 border border-gray-700/30">
-            <p className="text-xs dark:text-gray-300 text-gray-700 leading-relaxed">
-              This endpoint is associated with known command-and-control infrastructure and has been observed in multiple active malware campaigns.
+            {/* Confidence */}
+            <div className="enterprise-card p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-[var(--color-high)]" />
+                  <p className="text-[12px] text-[var(--text-secondary)]">Confidence</p>
+                </div>
+                <span className="text-[14px] font-bold text-[var(--text-primary)]">
+                  {selectedThreat.confidence}%
+                </span>
+              </div>
+            </div>
+
+            {/* Timeline */}
+            <div className="enterprise-card p-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-[var(--text-tertiary)]" />
+                  <p className="text-[12px] text-[var(--text-secondary)]">First Seen</p>
+                </div>
+                <p className="text-[12px] text-[var(--text-primary)] ml-6">
+                  {new Date(selectedThreat.first_seen).toLocaleString()}
+                </p>
+                
+                <div className="flex items-center gap-2 mt-3">
+                  <Clock className="w-4 h-4 text-[var(--text-tertiary)]" />
+                  <p className="text-[12px] text-[var(--text-secondary)]">Last Seen</p>
+                </div>
+                <p className="text-[12px] text-[var(--text-primary)] ml-6">
+                  {new Date(selectedThreat.last_seen).toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="enterprise-card p-4">
+              <div className="flex items-center justify-between">
+                <p className="text-[12px] text-[var(--text-secondary)]">Status</p>
+                <span className="text-[12px] font-semibold text-[var(--text-primary)]">
+                  {selectedThreat.status}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="enterprise-card p-4">
+            <p className="text-[13px] text-[var(--text-secondary)] text-center">
+              Awaiting Data Integration
+            </p>
+            <p className="text-[11px] text-[var(--text-tertiary)] text-center mt-2">
+              Select a threat from the feed or map to view details
             </p>
           </div>
-        </div>
-
-        {/* Action Grid */}
-        <div className="mb-6">
-          <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-3">Actions</span>
-          <div className="grid grid-cols-2 gap-2">
-            {actions.map((action, i) => {
-              const Icon = action.icon;
-              const colorClasses: Record<string, string> = {
-                red: 'bg-red-500/15 text-red-400 border-red-500/30 hover:bg-red-500/25',
-                purple: 'bg-purple-500/15 text-purple-400 border-purple-500/30 hover:bg-purple-500/25',
-                green: 'bg-green-500/15 text-green-400 border-green-500/30 hover:bg-green-500/25',
-                gray: 'bg-gray-500/10 text-gray-300 border-gray-600/30 hover:bg-gray-500/20'
-              };
-              
-              return (
-                <button
-                  key={i}
-                  onClick={() => handleActionClick(action.label)}
-                  className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-lg border transition-all duration-200 ${colorClasses[action.color as keyof typeof colorClasses]}`}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-[11px] font-semibold">{action.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-          <div className="flex items-center gap-2 mb-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_6px_rgba(239,68,68,0.6)]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-red-400">Recommended Response</span>
-          </div>
-          <p className="text-xs dark:text-red-200 text-red-800 font-medium">
-            Immediate containment advised.
-          </p>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -1,11 +1,6 @@
+/**
+ * Backward compatibility re-export
+ * New location: src/lib/supabase/index.ts
+ */
 
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase URL or anon key is not set in frontend');
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export { supabase, isSupabaseConfigured } from './supabase/index';

@@ -20,7 +20,7 @@ export const TopNav: React.FC = () => {
   return (
     <header className="dark:bg-[rgba(8,16,32,0.9)] bg-white px-6 py-5 flex items-center justify-between border-b dark:border-[rgba(139,92,246,0.2)] border-slate-200 relative z-10">
       <div>
-        <p className="text-[11px] dark:text-slate-500 text-slate-500 mb-1">Welcome back, NEXUS-07</p>
+        <p className="text-[11px] dark:text-slate-500 text-slate-500 mb-1">Welcome back, Analyst</p>
         <div className="flex items-center gap-4 flex-wrap">
           <h1 className="text-xl font-bold tracking-tight dark:text-[#F8FAFC] text-[#0F172A]">Mission Control</h1>
           <div className="flex items-center gap-2 bg-[rgba(139,92,246,0.12)] px-3 py-1.5 rounded-full border border-[rgba(139,92,246,0.25)]">

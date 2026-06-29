@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Sidebar } from './components/layout/Sidebar';
 import { LoadingSpinner } from './components/shared/LoadingSpinner';
 import { IncidentPanel } from './components/dashboard/IncidentPanel';
+import { CommandPalette } from './components/shared/CommandPalette';
 import { useThemeStore } from './store/useThemeStore';
+import { useSearchStore } from './store/useSearchStore';
 
 // Lazy-loaded pages
 const Dashboard = lazy(() => import('./pages/OverviewDashboard'));
@@ -18,6 +20,20 @@ const Settings = lazy(() => import('./pages/Settings'));
 
 function App() {
   const { theme } = useThemeStore();
+  const { open } = useSearchStore();
+
+  // Keyboard shortcut for command palette (Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        open();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open]);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -29,9 +45,7 @@ function App() {
 
   return (
     <Router>
-      <div className="grid grid-cols-[232px_1fr_320px] h-screen bg-[#050816] relative overflow-hidden">
-        {/* Background stars */}
-        <div id="bg-stars" className="absolute inset-0 z-0" />
+      <div className="grid grid-cols-[232px_1fr_320px] lg:grid-cols-[232px_1fr_320px] md:grid-cols-[64px_1fr] md:grid-cols-1 h-screen bg-[var(--bg-primary)] overflow-hidden">
         <Sidebar className="relative z-10" />
         <main className="relative z-10 overflow-y-auto">
           <Suspense fallback={<LoadingSpinner />}>
@@ -49,10 +63,11 @@ function App() {
             </Routes>
           </Suspense>
         </main>
-        <div className="relative z-10">
+        <div className="relative z-10 hidden lg:block">
           <IncidentPanel />
         </div>
       </div>
+      <CommandPalette />
     </Router>
   );
 }
